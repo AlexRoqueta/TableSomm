@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TableSomm Parser Test v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root {--bg:#f7f3ec; --surface:#fffdf9; --surface2:#f1ece3; --line:#d9d1c4; --text:#2f261d; --muted:#73695c; --accent:#7a3e1d; --good:#2f6f3e; --bad:#962f43; --radius:18px; --shadow:0 10px 30px rgba(47,38,29,.08);}*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text)}header{padding:32px 24px 12px;max-width:1360px;margin:0 auto}header h1{font:400 clamp(2.2rem,4vw,4.5rem)/1.02 'Instrument Serif',serif;margin:0 0 10px}.wrap{max-width:1360px;margin:0 auto;padding:24px;display:grid;grid-template-columns:430px 1fr;gap:20px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.left{padding:20px;position:sticky;top:16px;height:fit-content}.right{padding:20px;display:grid;gap:20px}label{font-size:.92rem;font-weight:600;display:block;margin-bottom:8px}input[type=file], textarea, button{font:inherit}textarea{width:100%;min-height:240px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff}input[type=file]{display:block;width:100%;padding:12px;border:1px dashed var(--line);border-radius:14px;background:var(--surface2)}button{border:0;border-radius:999px;padding:12px 16px;background:var(--accent);color:white;font-weight:700;cursor:pointer}button.alt{background:var(--surface2);color:var(--text);border:1px solid var(--line)}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.status{padding:12px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);margin-top:12px}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.kpi{padding:14px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--surface),#fff)}.kpi .n{font-size:1.6rem;font-weight:800}.tiny,.muted{color:var(--muted)}.tiny{font-size:.8rem}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}.box{padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}.box h2{margin:0 0 10px;font-size:1rem}.table{overflow:auto;border:1px solid var(--line);border-radius:16px}.table table{width:100%;border-collapse:collapse}.table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}pre{white-space:pre-wrap;word-break:break-word;background:#201a16;color:#f6efe7;padding:16px;border-radius:16px;overflow:auto;max-height:440px}.pill{display:inline-flex;padding:4px 8px;border-radius:999px;background:#eee7dc;font-size:.72rem;font-weight:700;margin:2px 4px 0 0}.pass{color:var(--good)} .fail{color:var(--bad)} @media (max-width:1020px){.wrap{grid-template-columns:1fr}.left{position:static}.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Parser test harness v5</h1>
+  <p class="muted">This version is tuned for the Water Grill dinner PDF structure, including split-price lines, reordered PDF text, whole fish pricing, shellfish price columns, and grouped steak variants.</p>
+</header>
+<div class="wrap">
+  <section class="panel left">
+    <label>Upload menu PDF, images, or text</label>
+    <input id="fileInput" type="file" accept=".pdf,image/*,.txt" multiple />
+    <div class="row" style="margin-top:12px">
+      <button id="runBtn">Parse file(s)</button>
+      <button id="sampleBtn" class="alt">Load sample text</button>
+      <button id="downloadBtn" class="alt" disabled>Download JSON</button>
+    </div>
+    <div class="status" id="status">Waiting for file.</div>
+    <label style="margin-top:16px">Raw extracted text</label>
+    <textarea id="rawText"></textarea>
+    <div class="row" style="margin-top:12px">
+      <button id="rerunBtn" class="alt">Parse text area</button>
+      <button id="copyBtn" class="alt">Copy JSON</button>
+    </div>
+  </section>
+  <section class="right">
+    <div class="kpis">
+      <div class="kpi"><div class="tiny">Parsed items</div><div class="n" id="kpiDishes">0</div></div>
+      <div class="kpi"><div class="tiny">Entrees</div><div class="n" id="kpiEntrees">0</div></div>
+      <div class="kpi"><div class="tiny">Multi-price</div><div class="n" id="kpiMulti">0</div></div>
+      <div class="kpi"><div class="tiny">Sections</div><div class="n" id="kpiSections">0</div></div>
+      <div class="kpi"><div class="tiny">Score</div><div class="n" id="kpiScore">—</div></div>
+    </div>
+    <div class="grid">
+      <div class="box"><h2>Parsed meal records</h2><div class="table"><table><thead><tr><th>Name</th><th>Section</th><th>Price(s)</th><th>Notes</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+      <div class="box"><h2>JSON output</h2><pre id="jsonOut">[]</pre></div>
+    </div>
+    <div class="grid">
+      <div class="box"><h2>Section detection</h2><div id="sections"></div></div>
+      <div class="box"><h2>Validation checks</h2><div id="checks"></div></div>
+    </div>
+  </section>
+</div>
+<script>
+const statusEl = document.getElementById('status');
+const rawText = document.getElementById('rawText');
+const rows = document.getElementById('rows');
+const jsonOut = document.getElementById('jsonOut');
+const sectionsEl = document.getElementById('sections');
+const checksEl = document.getElementById('checks');
+const downloadBtn = document.getElementById('downloadBtn');
+let latestParsed = [];
+const sectionHeaders = ['APPETIZERS','RAW BAR','CHILLED SHELLFISH','ICED SHELLFISH PLATTERS','SUSHI','SALADS & SANDWICHES','CRUSTACEANS','WHOLE FISH','ENTREES','USDA PRIME STEAKS','WAGYU GOLD','SIDES','FIRST OF SEASON: WILD PACIFIC HALIBUT'];
+const sampleText = `:: ENTREES ::\nWILD ICELANDIC COD FISH & CHIPS 37\nfrom the grindavik auction\nWILD PACIFIC BIGEYE TUNA 46\ntogarashi seared\nWILD MEXICAN SWORDFISH 44\na la plancha\nFARMED NEW ZEALAND KING SALMON 46\nfarro risotto\nWILD ALASKAN BLACK COD (SABLEFISH) 48\nsoba noodles\nWILD ROSS SEA CHILEAN SEA BASS 55\nbutternut squash gnocchi\nSHRIMP SCAMPI 42\npappardelle\nWILD EASTERN SEA SCALLOPS 49\ncauliflower puree\nCIOPPINO 45\ndungeness crab, jumbo shrimp, and fresh fish\nCHARCOAL GRILLED MARY'S ORGANIC CHICKEN 39\nwith herbed couscous`;
+function normalizeWhitespace(t){return t.replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();}
+function titleCase(s){return s.toLowerCase().replace(/\b\w/g,m=>m.toUpperCase());}
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function dedupe(arr){return [...new Set(arr.filter(Boolean))];}
+function cleanLines(text){
+  return normalizeWhitespace(text)
+    .split('\n')
+    .map(l=>l.trim())
+    .filter(Boolean)
+    .filter(l=>!/^\*consuming raw/i.test(l))
+    .filter(l=>!/^monday,/i.test(l))
+    .filter(l=>!/^general manager/i.test(l))
+    .filter(l=>!/^executive chef/i.test(l))
+    .filter(l=>!/^dinner$/i.test(l));
+}
+function isHeader(line){
+  const c = line.replace(/[:*]/g,'').trim().toUpperCase();
+  return sectionHeaders.includes(c) || /^::\s*[A-Z &:-]+\s*::$/.test(line);
+}
+function normalizeHeader(line){
+  const c = line.replace(/[:*]/g,'').trim().toUpperCase();
+  return c;
+}
+function extractPrices(line){
+  return [...line.matchAll(/(\d{1,3}(?:\.\d{2})?)(?=(?:\/(?:POUND|LB|¾ POUND|1½ POUNDS))?|\s|$)/ig)].map(m=>Number(m[1]));
+}
+function lineLooksLikeItem(line){
+  if(!/[A-Za-z]/.test(line)) return false;
+  if(/^(each|half|whole|eastern|pacific|serves|double r ranch|snake river farms)/i.test(line)) return false;
+  if(/^first of season!?$/i.test(line)) return false;
+  return /\d/.test(line) || /\.{2,}/.test(line);
+}
+function cleanName(line){
+  return titleCase(line
+    .replace(/\.{2,}/g,' ')
+    .replace(/\s+(?:\d{1,3}(?:\.\d{2})?(?:\/(?:POUND|LB|¾ POUND|1½ POUNDS))?\s*)+$/i,'')
+    .replace(/\*+/g,'')
+    .replace(/"/g,'')
+    .trim());
+}
+function detectSection(text){
+  const u = text.toUpperCase();
+  for(const h of ['ICED SHELLFISH PLATTERS','CHILLED SHELLFISH','SALADS & SANDWICHES','USDA PRIME STEAKS','FIRST OF SEASON: WILD PACIFIC HALIBUT','WAGYU GOLD','WHOLE FISH','CRUSTACEANS','APPETIZERS','ENTREES','RAW BAR','SUSHI','SIDES']){
+    if(u.includes(h)) return h;
+  }
+  return 'UNCATEGORIZED';
+}
+function parseStructured(text){
+  const lines = cleanLines(text);
+  const sections=[]; let current='UNCATEGORIZED'; let bucket=[];
+  for(const line of lines){
+    if(isHeader(line)){
+      if(bucket.length) sections.push({name:current, lines:[...bucket]});
+      current = normalizeHeader(line);
+      bucket=[];
+    } else bucket.push(line);
+  }
+  if(bucket.length) sections.push({name:current, lines:[...bucket]});
+  return sections;
+}
+function pushDish(list, name, section, prices, notes=''){
+  const clean = (name||'').trim();
+  if(!clean) return;
+  list.push({id:slug(section+'-'+clean+'-'+list.length), name:clean, section, price:prices[0]||0, allPrices:prices, notes});
+}
+function parseSection(section){
+  const items=[];
+  const lines=section.lines;
+  if(section.name==='ENTREES' || section.name==='APPETIZERS' || section.name==='SUSHI' || section.name==='SALADS & SANDWICHES' || section.name==='SIDES' || section.name==='FIRST OF SEASON WILD PACIFIC HALIBUT' || section.name==='FIRST OF SEASON: WILD PACIFIC HALIBUT'){
+    for(let i=0;i<lines.length;i++){
+      const line=lines[i];
+      if(!lineLooksLikeItem(line)) continue;
+      const prices=extractPrices(line);
+      if(!prices.length && i+1<lines.length && /^\d{1,3}(?:\.\d{2})?$/.test(lines[i+1])){prices.push(Number(lines[i+1])); i++;}
+      if(!prices.length) continue;
+      let notes=[]; let j=i+1;
+      while(j<lines.length && !isHeader(lines[j]) && !lineLooksLikeItem(lines[j])){notes.push(lines[j]); j++;}
+      pushDish(items, cleanName(line), section.name, prices, notes.join(' '));
+    }
+    return items;
+  }
+  if(section.name==='CRUSTACEANS' || section.name==='WHOLE FISH'){
+    for(let i=0;i<lines.length;i++){
+      const line=lines[i];
+      if(!lineLooksLikeItem(line)) continue;
+      const prices=extractPrices(line);
+      if(!prices.length) continue;
+      let notes=[]; let j=i+1;
+      while(j<lines.length && !lineLooksLikeItem(lines[j]) && !isHeader(lines[j])){notes.push(lines[j]); j++;}
+      pushDish(items, cleanName(line), section.name, prices, notes.join(' '));
+    }
+    return items;
+  }
+  if(section.name==='RAW BAR' || section.name==='CHILLED SHELLFISH'){
+    for(const line of lines){
+      if(!lineLooksLikeItem(line)) continue;
+      const prices=extractPrices(line);
+      if(!prices.length) continue;
+      pushDish(items, cleanName(line), section.name, prices, 'column-priced shellfish item');
+    }
+    return items;
+  }
+  if(section.name==='ICED SHELLFISH PLATTERS'){
+    for(const line of lines){
+      if(!lineLooksLikeItem(line)) continue;
+      const prices=extractPrices(line);
+      if(!prices.length && !/[A-Za-z]/.test(line)) continue;
+      pushDish(items, cleanName(line), section.name, prices, 'platter component or platter size row');
+    }
+    return items;
+  }
+  if(section.name==='USDA PRIME STEAKS' || section.name==='WAGYU GOLD'){
+    let currentGroup='';
+    for(const line of lines){
+      const prices=extractPrices(line);
+      const upper=line.toUpperCase();
+      if(!prices.length && /^[A-Z ][A-Z '&]+$/.test(upper) && upper.length < 28 && !/RANCH|LOOMIS|WASHINGTON|BOISE|GOLD LABEL/.test(upper)){
+        currentGroup = cleanName(line);
+        continue;
+      }
+      if(prices.length){
+        if(currentGroup && !/\.{2,}/.test(line) && !/RIBEYE|FILET|NEW YORK|STRIP/i.test(line.split(/\d/)[0])){
+          pushDish(items, `${currentGroup} — ${cleanName(line)}`, section.name, prices, 'grouped cut variant');
+        } else {
+          pushDish(items, cleanName(line), section.name, prices, 'steak item');
+        }
+      }
+    }
+    return items;
+  }
+  return items;
+}
+function parseMenuText(text){
+  let sections = parseStructured(text);
+  if(!sections.some(s=>s.name==='ENTREES')){
+    const sec = detectSection(text);
+    sections = [{name:sec, lines:cleanLines(text)}];
+  }
+  const dishes = dedupeSections(sections).flatMap(parseSection);
+  return {sections:dedupeSections(sections), dishes};
+}
+function dedupeSections(sections){
+  const seen = new Set();
+  const out=[];
+  for(const s of sections){
+    const key=s.name+'|'+s.lines.slice(0,4).join(' ');
+    if(seen.has(key)) continue;
+    seen.add(key); out.push(s);
+  }
+  return out;
+}
+function render(result){
+  latestParsed=result.dishes;
+  document.getElementById('kpiDishes').textContent=result.dishes.length;
+  document.getElementById('kpiEntrees').textContent=result.dishes.filter(d=>d.section==='ENTREES').length;
+  document.getElementById('kpiMulti').textContent=result.dishes.filter(d=>d.allPrices.length>1).length;
+  document.getElementById('kpiSections').textContent=result.sections.length;
+  const score = Math.round(((result.dishes.length>=25?1:0)+(result.dishes.filter(d=>d.section==='ENTREES').length>=10?1:0)+(result.dishes.some(d=>d.section==='USDA PRIME STEAKS')?1:0)+(result.dishes.some(d=>d.section==='WAGYU GOLD')?1:0)+(result.dishes.filter(d=>d.allPrices.length>1).length>=8?1:0))/5*100);
+  document.getElementById('kpiScore').textContent=score+'%';
+  rows.innerHTML = result.dishes.map(d=>`<tr><td><strong>${d.name}</strong></td><td>${d.section}</td><td>${d.allPrices.join(' / ') || '—'}</td><td>${d.notes || ''}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No dishes parsed.</td></tr>';
+  jsonOut.textContent = JSON.stringify(result.dishes, null, 2);
+  sectionsEl.innerHTML = result.sections.map(s=>`<div class="status"><strong>${s.name}</strong><div class="tiny" style="margin-top:6px">${s.lines.length} lines</div></div>`).join('');
+  const checks=[
+    {label:'Entrees section captures 10 items', pass: result.dishes.filter(d=>d.section==='ENTREES').length >= 10},
+    {label:'USDA Prime Steaks captured', pass: result.dishes.filter(d=>d.section==='USDA PRIME STEAKS').length >= 3},
+    {label:'Wagyu Gold captured', pass: result.dishes.filter(d=>d.section==='WAGYU GOLD').length >= 4},
+    {label:'Raw Bar items captured', pass: result.dishes.filter(d=>d.section==='RAW BAR').length >= 8},
+    {label:'Chilled Shellfish items captured', pass: result.dishes.filter(d=>d.section==='CHILLED SHELLFISH').length >= 5},
+    {label:'Crustaceans captured', pass: result.dishes.filter(d=>d.section==='CRUSTACEANS').length >= 4}
+  ];
+  checksEl.innerHTML = checks.map(c=>`<div class="status"><strong class="${c.pass?'pass':'fail'}">${c.pass?'PASS':'FAIL'}</strong><div>${c.label}</div></div>`).join('');
+  statusEl.innerHTML = `Parsed <strong>${result.dishes.length}</strong> items across <strong>${result.sections.length}</strong> detected sections.`;
+  downloadBtn.disabled = !result.dishes.length;
+}
+async function extractPdfText(file){
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
+  if(!pdfjsLib) throw new Error('PDF library did not load.');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  let text='';
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const items = content.items.slice().sort((a,b)=>{
+      const yDiff = Math.abs(b.transform[5]-a.transform[5]);
+      if(yDiff > 3) return b.transform[5]-a.transform[5];
+      return a.transform[4]-b.transform[4];
+    });
+    let lastY=null, line=[];
+    for(const item of items){
+      const x=item.transform[4], y=item.transform[5], str=(item.str||'').trim();
+      if(!str) continue;
+      if(lastY===null || Math.abs(y-lastY) <= 3){ line.push({x,str}); }
+      else {
+        text += line.sort((a,b)=>a.x-b.x).map(v=>v.str).join(' ') + '\n';
+        line=[{x,str}];
+      }
+      lastY=y;
+    }
+    if(line.length) text += line.sort((a,b)=>a.x-b.x).map(v=>v.str).join(' ') + '\n';
+    text += '\n';
+  }
+  return text;
+}
+async function handleFile(){
+  const files=[...document.getElementById('fileInput').files];
+  if(!files.length){statusEl.textContent='Choose one or more PDFs, images, or text files first.'; return;}
+  statusEl.textContent=`Reading ${files.length} file(s)...`;
+  const chunks=[];
+  for(const file of files){
+    if(file.type==='application/pdf' || file.name.toLowerCase().endsWith('.pdf')) chunks.push(await extractPdfText(file));
+    else if(file.type.startsWith('image/')) chunks.push(`[IMAGE FILE: ${file.name}]`);
+    else chunks.push(await file.text());
+  }
+  rawText.value = normalizeWhitespace(chunks.join('\n\n'));
+  render(parseMenuText(rawText.value));
+}
+function downloadJson(){const blob=new Blob([JSON.stringify(latestParsed,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='parsed-menu.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),300);}
+document.getElementById('runBtn').onclick=()=>handleFile().catch(err=>{console.error(err); statusEl.textContent='Parse failed: '+(err&&err.message?err.message:err);});
+document.getElementById('sampleBtn').onclick=()=>{rawText.value=sampleText; render(parseMenuText(sampleText));};
+document.getElementById('rerunBtn').onclick=()=>render(parseMenuText(rawText.value));
+document.getElementById('downloadBtn').onclick=downloadJson;
+document.getElementById('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(jsonOut.textContent); statusEl.textContent='JSON copied to clipboard.';}catch{statusEl.textContent='Clipboard copy blocked.';}};
+render(parseMenuText(sampleText));
+</script>
+</body>
+</html>
