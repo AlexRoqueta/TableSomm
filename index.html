@@ -58,7 +58,196 @@ $('#saveCampaign').onclick=()=>{ state.campaign={name:$('#campaignName').value.t
 $('#wineSelect').onchange=e=>{ if(e.target.value==='__add__'){ clearWine(); return; } const w=state.wines.find(x=>x.id===e.target.value); if(w) fillWineForm(w); }; $('#wineForm').onsubmit=e=>{e.preventDefault(); const wine={id:$('#wineId').value||`w${Date.now()}`,name:$('#wineName').value.trim(),varietal:$('#wineVarietal').value.trim(),region:$('#wineRegion').value.trim(),color:$('#wineColor').value,body:$('#wineBody').value,acidity:Number($('#wineAcidity').value),tannin:Number($('#wineTannin').value),sweetness:Number($('#wineSweetness').value),oak:Number($('#wineOak').value),priceBottle:Number($('#winePriceBottle').value),priceGlass:Number($('#winePriceGlass').value||0),inventory:Number($('#wineInventory').value),byGlass:$('#wineByGlass').value==='true',priority:Number($('#winePriority').value),featured:$('#wineFeatured').value==='true',notes:$('#wineNotes').value.trim()||'Balanced selection.',pairingTags:$('#wineTags').value.split(',').map(s=>s.trim()).filter(Boolean)}; const i=state.wines.findIndex(x=>x.id===wine.id); if(i>=0) state.wines[i]=wine; else state.wines.unshift(wine); clearWine(); render() };
 function clearWine(){ $('#wineForm').reset(); $('#wineId').value=''; if($('#wineSelect')) $('#wineSelect').value='__add__'; $('#wineAcidity').value=3; $('#wineTannin').value=2; $('#wineSweetness').value=1; $('#wineOak').value=2; $('#winePriceBottle').value=54; $('#winePriceGlass').value=16; $('#wineInventory').value=12; $('#winePriority').value='0'; $('#wineByGlass').value='true'; $('#wineFeatured').value='false'; }
 $('#clearWine').onclick=clearWine; $('#searchWine').oninput=renderManager; $('#filterWine').onchange=renderManager;
-function normalize(r){ return {id:r.id||`w${Date.now()}`,name:r.name||'Unnamed wine',varietal:r.varietal||'Unknown',region:r.region||'',color:r.color||'Red',body:r.body||'Medium',acidity:Number(r.acidity??3),tannin:Number(r.tannin??2),sweetness:Number(r.sweetness??1),oak:Number(r.oak??2),priceBottle:Number(r.priceBottle??0),byGlass:String(r.byGlass).toLowerCase()==='true'||r.byGlass===true,inventory:Number(r.inventory??0),priority:Number(r.priority??0),featured:String(r.featured).toLowerCase()==='true'||r.featured===true,notes:r.notes||'Imported selection.',pairingTags:Array.isArray(r.pairingTags)?r.pairingTags:String(r.pairingTags||'').split(/[|,]/).map(s=>s.trim()).filter(Boolean)} }
+function normalize(r){
+  r = r || {};
+  const name = String(r.name || 'Unnamed wine');
+  const nameLower = name.toLowerCase();
+  const sectionRaw = String(r.section || r.category || '').toLowerCase();
+  const combined = `${nameLower} ${sectionRaw}`;
+  function pick(re){ const m=combined.match(re); return m ? m[0] : ''; }
+  const varietalMap = [
+    [/\bsparkling\b|\bchampagne\b|\bcava\b|\bprosecco\b|\bfranciacorta\b|\bcrémant\b|\bcremant\b|\bbrut\b|\bblanc de blancs?\b|\bblanc de noirs?\b/, 'Sparkling'],
+    [/\bsauvignon blanc\b|\bsancerre\b|\bpouilly[- ]fum[ée]\b/, 'Sauvignon Blanc'],
+    [/\bchardonnay\b|\bchablis\b|\bmeursault\b|\bmontrachet\b|\bwhite burgundy\b/, 'Chardonnay'],
+    [/\briesling\b/, 'Riesling'],
+    [/\bpinot gris\b|\bpinot grigio\b/, 'Pinot Gris'],
+    [/\bgr[üu]ner veltliner\b|\bgruner\b/, 'Grüner Veltliner'],
+    [/\bgewürztraminer\b|\bgewurztraminer\b/, 'Gewürztraminer'],
+    [/\bch[eé]nin blanc\b|\bvouvray\b/, 'Chenin Blanc'],
+    [/\bviognier\b|\bcondrieu\b/, 'Viognier'],
+    [/\balbari[ñn]o\b/, 'Albariño'],
+    [/\bverdejo\b/, 'Verdejo'],
+    [/\bvermentino\b/, 'Vermentino'],
+    [/\bsemillon\b|\bs[ée]millon\b/, 'Sémillon'],
+    [/\bmusc[aá]det\b|\bmuscadet\b/, 'Muscadet'],
+    [/\btorront[eé]s\b/, 'Torrontés'],
+    [/\bpinot noir\b|\bbourgogne rouge\b|\bgevrey\b|\bvolnay\b|\bpommard\b|\bbeaune\b/, 'Pinot Noir'],
+    [/\bcabernet sauvignon\b|\bcab sauv\b/, 'Cabernet Sauvignon'],
+    [/\bcabernet franc\b|\bchinon\b|\bbourgueil\b/, 'Cabernet Franc'],
+    [/\bmerlot\b|\bsaint[- ]?[ée]milion\b|\bpomerol\b/, 'Merlot'],
+    [/\bmalbec\b/, 'Malbec'],
+    [/\bsyrah\b|\bshiraz\b|\bc[oô]te[- ]r[oô]tie\b|\bhermitage\b|\bcornas\b/, 'Syrah'],
+    [/\bgrenache\b|\bgarnacha\b|\bch[aâ]teauneuf[- ]du[- ]pape\b/, 'Grenache'],
+    [/\bnebbiolo\b|\bbarolo\b|\bbarbaresco\b/, 'Nebbiolo'],
+    [/\bbarbera\b/, 'Barbera'],
+    [/\bsangiovese\b|\bchianti\b|\bbrunello\b|\bmontalcino\b/, 'Sangiovese'],
+    [/\btempranillo\b|\brioja\b|\bribera del duero\b/, 'Tempranillo'],
+    [/\bzinfandel\b|\bprimitivo\b/, 'Zinfandel'],
+    [/\bgamay\b|\bbeaujolais\b/, 'Gamay'],
+    [/\bcarm[eé]n[eè]re\b|\bcarmenere\b/, 'Carménère'],
+    [/\bmourv[eè]dre\b|\bmonastrell\b/, 'Mourvèdre'],
+    [/\bpetite sirah\b|\bpetit syrah\b/, 'Petite Sirah'],
+    [/\bdolcetto\b/, 'Dolcetto'],
+    [/ros[ée]|rosato|rosado/, 'Rosé'],
+    [/\bport\b|\bporto\b/, 'Port'],
+    [/\bsherry\b|\bjerez\b|\bfino\b|\bmanzanilla\b|\boloroso\b/, 'Sherry'],
+    [/\bmadeira\b/, 'Madeira'],
+    [/\bmoscato\b|\bmuscat\b/, 'Muscat'],
+    [/\bsauternes\b/, 'Sauternes']
+  ];
+  let varietal = r.varietal && String(r.varietal).trim();
+  if(!varietal){
+    for(const [re,v] of varietalMap){ if(re.test(combined)){ varietal = v; break; } }
+  }
+  if(!varietal) varietal = 'Unknown';
+  const vLow = varietal.toLowerCase();
+
+  let color = r.color && String(r.color).trim();
+  if(!color){
+    if(/sparkling|champagne|cava|prosecco|franciacorta|crémant|cremant|brut/.test(combined)) color = 'Sparkling';
+    else if(/ros[ée]|rosato|rosado/.test(combined)) color = 'Rosé';
+    else if(/\borange wine\b|\bskin contact\b|\bskin-contact\b/.test(combined)) color = 'Orange';
+    else if(/port|sherry|madeira|sauternes|dessert|ice wine|eiswein|tokaji/.test(combined)) color = 'Dessert';
+    else if(/white|blanc|bianco|blanco|weiss|weiß/.test(sectionRaw) || /chardonnay|sauvignon blanc|riesling|pinot gris|pinot grigio|grüner|gruner|gewürztraminer|gewurztraminer|chenin|viognier|albariño|albarino|verdejo|vermentino|semillon|sémillon|muscadet|torrontes|torrontés|muscat|moscato|sancerre|chablis|meursault/.test(combined)) color = 'White';
+    else if(/red|rouge|rosso|tinto/.test(sectionRaw) || /pinot noir|cabernet|merlot|malbec|syrah|shiraz|grenache|garnacha|nebbiolo|barbera|sangiovese|chianti|brunello|tempranillo|rioja|zinfandel|primitivo|gamay|beaujolais|carmenere|carménère|mourvèdre|mourvedre|monastrell|petite sirah|dolcetto|bordeaux|barolo|barbaresco/.test(combined)) color = 'Red';
+    else color = 'Red';
+  }
+
+  function inferDefault(redVal, whiteVal, sparkVal, roseVal, dessVal){
+    if(/sparkling/i.test(color)) return sparkVal;
+    if(/ros[ée]/i.test(color)) return roseVal;
+    if(/dessert/i.test(color)) return dessVal;
+    if(/white|orange/i.test(color)) return whiteVal;
+    return redVal;
+  }
+
+  let body = r.body && String(r.body).trim();
+  if(!body){
+    if(/chardonnay|viognier|meursault|montrachet|sauternes/.test(vLow)) body = 'Full';
+    else if(/sauvignon blanc|riesling|pinot gris|pinot grigio|grüner|gruner|albari|verdejo|vermentino|chenin|muscadet|sparkling|champagne/.test(vLow)) body = 'Light';
+    else if(/cabernet|syrah|shiraz|malbec|nebbiolo|barolo|petite sirah|mourv|monastrell|zinfandel|primitivo|tempranillo|sangiovese|brunello|carmenere|carménère|merlot/.test(vLow)) body = 'Full';
+    else if(/pinot noir|gamay|beaujolais|barbera|dolcetto|grenache|rosé|rose/.test(vLow)) body = 'Light';
+    else body = inferDefault('Medium','Light','Light','Light','Full');
+  }
+
+  function num(v, fallback){ const n = Number(v); return Number.isFinite(n) ? n : fallback; }
+
+  let acidity = (r.acidity!=null && r.acidity!=='') ? num(r.acidity, null) : null;
+  if(acidity==null){
+    if(/sparkling|champagne|sauvignon blanc|sancerre|riesling|albari|verdejo|vermentino|chenin|muscadet|gamay|beaujolais|chablis|barbera|nebbiolo|sangiovese|chianti/.test(vLow)) acidity = 4;
+    else if(/chardonnay|viognier|merlot|malbec|zinfandel|grenache|syrah/.test(vLow)) acidity = 3;
+    else acidity = inferDefault(3,4,5,4,3);
+  }
+
+  let tannin = (r.tannin!=null && r.tannin!=='') ? num(r.tannin, null) : null;
+  if(tannin==null){
+    if(/cabernet|nebbiolo|barolo|syrah|shiraz|petite sirah|tannat|mourv|monastrell|sangiovese|brunello|tempranillo|malbec/.test(vLow)) tannin = 4;
+    else if(/merlot|carmen|grenache|zinfandel|primitivo|barbera/.test(vLow)) tannin = 3;
+    else if(/pinot noir|gamay|beaujolais|dolcetto/.test(vLow)) tannin = 2;
+    else tannin = inferDefault(3,1,1,1,2);
+  }
+
+  let sweetness = (r.sweetness!=null && r.sweetness!=='') ? num(r.sweetness, null) : null;
+  if(sweetness==null){
+    if(/sauternes|port|sherry|madeira|moscato|muscat|tokaji|dessert|ice wine/.test(vLow + ' ' + sectionRaw)) sweetness = 4;
+    else if(/riesling|gewürztraminer|gewurztraminer|chenin/.test(vLow) && /off[- ]dry|sweet|demi[- ]sec|moelleux|sp[äa]tlese|auslese/.test(combined)) sweetness = 3;
+    else sweetness = 1;
+  }
+
+  let oak = (r.oak!=null && r.oak!=='') ? num(r.oak, null) : null;
+  if(oak==null){
+    if(/chardonnay|cabernet|syrah|merlot|malbec|tempranillo|rioja|brunello|barolo|nebbiolo|meursault|montrachet/.test(vLow)) oak = 3;
+    else if(/sauvignon blanc|riesling|pinot gris|pinot grigio|albari|verdejo|vermentino|muscadet|gamay|beaujolais|sparkling|champagne|chenin|grüner|gruner/.test(vLow)) oak = 1;
+    else oak = 2;
+  }
+
+  function priceNum(v){ if(v==null||v==='') return null; const s=String(v).replace(/[^0-9.\-]/g,''); const n=Number(s); return Number.isFinite(n)&&n>0?n:null; }
+  const prices = (r.prices && typeof r.prices==='object') ? r.prices : {};
+  let priceBottle = priceNum(r.priceBottle);
+  if(priceBottle==null) priceBottle = priceNum(r.bottlePrice);
+  if(priceBottle==null) priceBottle = priceNum(prices.bottle);
+  if(priceBottle==null && Array.isArray(r.priceTiers)){
+    for(const t of r.priceTiers){
+      if(t && typeof t==='object'){
+        const label=String(t.label||t.type||t.size||'').toLowerCase();
+        if(/bottle|750/.test(label)){ const p=priceNum(t.price); if(p!=null){ priceBottle=p; break; } }
+      }
+    }
+  }
+  if(priceBottle==null) priceBottle = 0;
+
+  let glassPrice = priceNum(r.glassPrice);
+  if(glassPrice==null) glassPrice = priceNum(r.byGlassPrice);
+  if(glassPrice==null) glassPrice = priceNum(prices.glass);
+  if(glassPrice==null && Array.isArray(r.priceTiers)){
+    for(const t of r.priceTiers){
+      if(t && typeof t==='object'){
+        const label=String(t.label||t.type||t.size||'').toLowerCase();
+        if(/glass|by[- ]the[- ]glass|btg/.test(label)){ const p=priceNum(t.price); if(p!=null){ glassPrice=p; break; } }
+      }
+    }
+  }
+  const halfBottlePrice = priceNum(r.halfBottlePrice) || priceNum(prices.halfBottle) || priceNum(prices.half) || null;
+  const carafePrice = priceNum(prices.carafe) || priceNum(r.carafePrice) || null;
+
+  let byGlass;
+  if(r.byGlass!=null && r.byGlass!==''){
+    byGlass = String(r.byGlass).toLowerCase()==='true' || r.byGlass===true;
+  } else {
+    byGlass = glassPrice!=null && glassPrice>0;
+  }
+
+  let inventory = (r.inventory!=null && r.inventory!=='') ? num(r.inventory, 1) : 1;
+  if(!Number.isFinite(inventory)) inventory = 1;
+
+  const priority = (r.priority!=null && r.priority!=='') ? num(r.priority, 0) : 0;
+  const featured = String(r.featured).toLowerCase()==='true' || r.featured===true;
+
+  const baseTags = Array.isArray(r.pairingTags) ? r.pairingTags.slice()
+    : Array.isArray(r.tags) ? r.tags.slice()
+    : String(r.pairingTags||r.tags||'').split(/[|,]/).map(s=>s.trim()).filter(Boolean);
+  const tagsLower = baseTags.map(t=>String(t).toLowerCase());
+  const addTag = t => { if(!tagsLower.includes(t)){ baseTags.push(t); tagsLower.push(t); } };
+  if(/sparkling/i.test(color)){ addTag('sparkling'); addTag('shellfish'); addTag('fried'); addTag('citrus'); addTag('light'); }
+  if(/sauvignon blanc|albari|verdejo|vermentino|muscadet|grüner|gruner|chenin|riesling/i.test(varietal)){ addTag('shellfish'); addTag('citrus'); addTag('light'); addTag('salad'); }
+  if(/chardonnay|viognier|meursault|montrachet/i.test(varietal)){ addTag('cream'); addTag('rich'); addTag('lobster'); addTag('crab'); addTag('white fish'); }
+  if(/pinot noir|gamay|beaujolais/i.test(varietal)){ addTag('duck'); addTag('salmon'); addTag('mushroom'); addTag('earthy'); }
+  if(/cabernet|merlot|malbec|petite sirah|nebbiolo|barolo|brunello|sangiovese|syrah|shiraz|tempranillo|carmen|monastrell|mourv|zinfandel|primitivo/i.test(varietal)){ addTag('beef'); addTag('lamb'); addTag('grill'); addTag('bold'); }
+  if(/ros[ée]/i.test(color) || /ros[ée]/i.test(varietal)){ addTag('salad'); addTag('shellfish'); addTag('light'); addTag('spice'); }
+  if(/riesling|gewürztraminer|gewurztraminer|moscato|muscat/i.test(varietal)){ addTag('spicy'); addTag('asian'); }
+  if(/port|sherry|madeira|sauternes/i.test(varietal) || /dessert/i.test(color)){ addTag('dessert'); addTag('cheese'); }
+
+  const notes = r.notes || 'Imported selection.';
+  const region = r.region || '';
+  const vintage = r.vintage || r.year || '';
+
+  return {
+    id: r.id || `w${Date.now()}${Math.random().toString(36).slice(2,5)}`,
+    name, varietal, region, color, body,
+    acidity, tannin, sweetness, oak,
+    priceBottle,
+    glassPrice: glassPrice!=null ? glassPrice : 0,
+    halfBottlePrice: halfBottlePrice!=null ? halfBottlePrice : 0,
+    carafePrice: carafePrice!=null ? carafePrice : 0,
+    byGlass,
+    inventory, priority, featured,
+    notes,
+    vintage,
+    section: r.section || r.category || '',
+    pairingTags: baseTags,
+    tags: baseTags
+  };
+}
 function csv(text){ const lines=text.trim().split(/\r?\n/).filter(Boolean), head=lines.shift().split(',').map(x=>x.trim()); return lines.map((ln,i)=>{const v=ln.split(',').map(x=>x.trim()), o={}; head.forEach((h,idx)=>o[h]=v[idx]||''); return normalize({...o,id:o.id||`imp${i}`})}) }
 function fmtElapsed(ms){ const s=Math.floor(ms/1000); const m=Math.floor(s/60); const r=s%60; return `${m}:${String(r).padStart(2,'0')}`; } function startParseProgress(progEl,textEl){ if(!progEl||!textEl) return null; const start=Date.now(); textEl.textContent='Parsing... elapsed 0:00'; progEl.classList.add('active'); const id=setInterval(()=>{ textEl.textContent=`Parsing... elapsed ${fmtElapsed(Date.now()-start)}`; },1000); return {id,start}; } function stopParseProgress(progEl,handle){ if(handle&&handle.id) clearInterval(handle.id); if(progEl) progEl.classList.remove('active'); }
 $('#fileInput').onchange=async e=>{ const inputEl=e.target; const f=inputEl.files[0]; if(!f) return; const progEl=$('#wineParseProgress'); const textEl=$('#wineParseProgressText'); let progHandle=null; try{ const name=(f.name||'').toLowerCase(); const isJson=name.endsWith('.json')||f.type==='application/json'; const isCsv=name.endsWith('.csv')||f.type==='text/csv'; const isPdf=name.endsWith('.pdf')||f.type==='application/pdf'; const isImage=(f.type||'').startsWith('image/')||/\.(png|jpe?g|webp|heic|heif|gif|bmp|tiff?)$/i.test(name); let wineParserVersion=''; if(isJson){ const t=await f.text(); const parsed=JSON.parse(t); const arr=Array.isArray(parsed)?parsed:(parsed.wines||parsed.items||parsed.wineList||[]); state.wines=arr.map(normalize); if(parsed && parsed.parserVersion) wineParserVersion=parsed.parserVersion; } else if(isCsv){ const t=await f.text(); state.wines=csv(t); } else if(isPdf||isImage){ $('#importStatus').textContent=isPdf?'Parsing wine list PDF — this can take 1–4 minutes. Please keep this page open while we extract the menu.':'Parsing wine list image — this can take 1–4 minutes. Please keep this page open while we extract the menu.'; progHandle=startParseProgress(progEl,textEl); const form=new FormData(); form.append('file',f); const res=await fetch(`${MENU_PARSER_API_BASE}/parse-wine-list`,{method:'POST',body:form}); const payload=await res.json().catch(()=>({})); if(!res.ok) throw new Error(payload.error||'Wine list parse failed'); const arr=Array.isArray(payload)?payload:(payload.wines||payload.items||payload.wineList||[]); state.wines=arr.map(normalize); if(payload && payload.parserVersion) wineParserVersion=payload.parserVersion; } else { throw new Error('Unsupported file type'); } const versionNote=wineParserVersion?` (parser ${wineParserVersion})`:''; $('#importStatus').textContent=`${state.wines.length} wines imported${versionNote}.`; inputEl.value=''; render(); }catch(err){ $('#importStatus').textContent=`Import failed: ${err?.message||'Check the file format.'}`; inputEl.value=''; } finally { stopParseProgress(progEl,progHandle); } };
