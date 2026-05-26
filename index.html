@@ -7,6 +7,24 @@
 :root,[data-theme=light]{--text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);--text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);--text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.25rem;--s6:1.5rem;--s8:2rem;--s10:2.5rem;--bg:#f7f3f4;--sf:#fffafb;--sf2:#f7eef0;--off:#f1e3e7;--bd:#e5d2d8;--dv:#eddfe3;--tx:#23161b;--mut:#7a5a63;--inv:#fff7f8;--pri:#6f1d2b;--prisoft:#f1d8de;--blue:#7f3047;--green:#6f5d2b;--amber:#a34f2c;--r1:.6rem;--r2:1rem;--r3:1.35rem;--rf:999px;--shadow:0 18px 40px rgba(13,59,74,.10);--font:'Satoshi',Inter,sans-serif}
 [data-theme=dark]{--bg:#140d10;--sf:#1d1216;--sf2:#28181d;--off:#311b22;--bd:#4b2d36;--dv:#382127;--tx:#f6e9ed;--mut:#c7a6af;--inv:#140d10;--pri:#d79aaa;--prisoft:#40222b;--blue:#b5677d;--green:#9e8a53;--amber:#e08d68;--shadow:0 14px 36px rgba(0,0,0,.35)}
 *{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:var(--text-base)/1.55 var(--font)}body{overflow:hidden}button,input,select,textarea{font:inherit}button{cursor:pointer;border:none;background:none;color:inherit}input,select,textarea{width:100%;padding:.85rem 1rem;border:1px solid var(--bd);background:var(--sf2);color:var(--tx);border-radius:var(--r2)}textarea{min-height:86px;resize:vertical}:focus-visible{outline:2px solid var(--pri);outline-offset:2px}.app{display:grid;grid-template-columns:300px 1fr;height:100dvh}.sidebar{padding:var(--s5);background:var(--sf);border-right:1px solid var(--dv);display:flex;flex-direction:column;gap:var(--s5);overflow:auto}.main{overflow:auto;padding:var(--s5) var(--s6) var(--s8)}.logo{display:flex;gap:.8rem;align-items:center}.logo svg{width:42px;height:42px;color:var(--pri)}.logo h1{margin:0;font-size:var(--text-lg)}.logo p{margin:.15rem 0 0;color:var(--mut);font-size:var(--text-xs)}.nav{display:grid;gap:.4rem}.nav button{padding:.9rem 1rem;border-radius:var(--r2);text-align:left;font-size:var(--text-sm)}.nav button.active{background:var(--pri);color:var(--inv)}.card,.panel{background:linear-gradient(180deg,var(--sf),var(--sf2));border:1px solid var(--bd);border-radius:var(--r3);padding:var(--s5);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.tiny{font-size:var(--text-xs)}.muted{color:var(--mut)}.top{display:flex;justify-content:space-between;gap:var(--s4);align-items:flex-start;margin-bottom:var(--s5)}.hero{position:relative;overflow:hidden;padding:var(--s10);border-radius:calc(var(--r3) + .2rem);background:radial-gradient(circle at top left, rgba(255,220,230,.22), transparent 30%),linear-gradient(135deg,#451019 0%, #6f1d2b 48%, #8d3146 100%);color:#effbfd;border:1px solid rgba(255,255,255,.18);box-shadow:0 28px 60px rgba(77,18,31,.26)}.hero::after{content:'';position:absolute;inset:auto -8% -20% auto;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(6px)}.hero h2{font-size:clamp(2rem,1.4rem + 2vw,3.3rem)!important;max-width:12ch}.hero p{color:rgba(239,251,253,.82)!important;max-width:58ch}.hero-grid{display:grid;grid-template-columns:1.2fr .9fr;gap:var(--s6);align-items:end}.hero-stat{padding:1rem 1.1rem;border-radius:1rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)}.hero-stat strong{display:block;font-size:1.7rem;line-height:1}.hero-logo{background:rgba(255,247,248,.96);border-radius:1.25rem;padding:1rem;display:grid;place-items:center;min-height:240px}.hero-logo img{max-width:100%;max-height:220px;object-fit:contain;mix-blend-mode:multiply}.sidebar{background:linear-gradient(180deg,var(--sf),var(--sf2))}.statusbar{background:var(--sf)} @media (max-width:980px){.hero-grid{grid-template-columns:1fr}.hero{padding:var(--s6)}}.top h2{margin:0;font-size:var(--text-xl);line-height:1.05}.top p{margin:.35rem 0 0;color:var(--mut);max-width:68ch}.grid{display:grid;gap:var(--s5)}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.hidden{display:none!important}.inline{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.btn{padding:.85rem 1rem;border-radius:var(--r2);font-weight:700;min-height:44px}.btn-primary{background:var(--pri);color:var(--inv)}.btn-secondary{background:var(--off);border:1px solid var(--bd)}.btn-ghost{border:1px dashed var(--bd)}.pill{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .65rem;border-radius:var(--rf);font-size:var(--text-xs);font-weight:700;background:var(--off);color:var(--mut)}.pill.priority{background:var(--prisoft);color:var(--pri)}.pill.good{background:rgba(67,122,34,.12);color:var(--green)}.list{display:grid;gap:.8rem}.item{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r3);padding:var(--s4);display:grid;gap:.6rem}.row{display:flex;justify-content:space-between;gap:var(--s4);align-items:flex-start}.form2,.form3{display:grid;gap:var(--s4)}.form2{grid-template-columns:repeat(2,minmax(0,1fr))}.form3{grid-template-columns:repeat(3,minmax(0,1fr))}label{display:grid;gap:.4rem;font-size:var(--text-sm);font-weight:700}.kpi strong{font-size:1.95rem;line-height:1}.table{overflow:auto;border:1px solid var(--bd);border-radius:var(--r3)}table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}th,td{padding:.9rem 1rem;border-bottom:1px solid var(--dv);text-align:left;vertical-align:top}th{background:var(--off);font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}tr:last-child td{border-bottom:none}.hero-note{padding:var(--s4);border-radius:var(--r3);background:var(--prisoft);border:1px solid color-mix(in srgb,var(--pri) 18%,var(--bd))}.mobile{display:none}.mobile-right{display:flex;gap:.75rem;align-items:center}.mobile-brand{display:flex;gap:.7rem;align-items:center;justify-content:flex-end;text-align:right}.mobile-brand img{width:42px;height:42px;border-radius:12px;object-fit:contain;background:#fff;padding:.25rem;border:1px solid var(--bd)}.logo img,.hero-logo img{display:block}.statusbar{display:flex;justify-content:space-between;gap:var(--s4);align-items:center;padding:.75rem 1rem;border:1px solid var(--bd);border-radius:var(--r2);background:var(--sf2)}@media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{display:none;position:fixed;inset:0 auto 0 0;width:min(88vw,320px);z-index:20;box-shadow:var(--shadow)}.sidebar.open{display:flex}.mobile{display:flex;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s4)}.main{padding:var(--s4)}.g2,.g3,.form2,.form3{grid-template-columns:1fr}.top{flex-direction:column}}.parse-progress{display:none;align-items:center;gap:.5rem;margin-top:var(--s2);font-size:var(--text-xs);color:var(--pri);font-weight:700}.parse-progress.active{display:inline-flex}.parse-spinner{width:14px;height:14px;border:2px solid var(--prisoft);border-top-color:var(--pri);border-radius:50%;animation:parseSpin .8s linear infinite;display:inline-block;flex-shrink:0}@keyframes parseSpin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.parse-spinner{animation-duration:2s}}
+/* Premium dark recommendation module */
+.reco-module{position:relative;border-radius:1.4rem;padding:1.1rem;background:radial-gradient(ellipse at top right,rgba(151,38,60,.28),transparent 55%),radial-gradient(ellipse at bottom left,rgba(40,16,22,.6),transparent 60%),linear-gradient(155deg,#1a0f12 0%,#211318 50%,#2a181e 100%);border:1px solid rgba(215,154,170,.18);box-shadow:0 30px 70px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden;color:#f6e9ed}
+.reco-module::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(215,154,170,.07) 1px,transparent 1px);background-size:14px 14px;opacity:.5;pointer-events:none;border-radius:inherit}
+.reco-module::after{content:'';position:absolute;top:-30%;right:-15%;width:55%;height:80%;background:radial-gradient(circle,rgba(151,38,60,.35),transparent 65%);filter:blur(40px);pointer-events:none}
+.reco-header{position:relative;display:flex;justify-content:space-between;align-items:center;padding:.35rem .35rem 1rem;border-bottom:1px solid rgba(215,154,170,.12);margin-bottom:1rem}
+.reco-dots{display:flex;gap:.4rem}
+.reco-dots span{width:9px;height:9px;border-radius:50%;background:rgba(215,154,170,.22)}
+.reco-live-pill{position:relative;padding:.5rem 1rem;border-radius:999px;background:rgba(120,180,140,.12);color:#9bd3a9;font-weight:700;font-size:.85rem;border:1px solid rgba(120,180,140,.25)}
+.reco-meal{position:relative;background:rgba(20,10,14,.55);border:1px solid rgba(215,154,170,.12);border-radius:1.1rem;padding:1.1rem 1.2rem;margin-bottom:.9rem}
+.reco-meal-label{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(215,154,170,.65);font-weight:700;margin-bottom:.35rem}
+.reco-meal-name{font-size:1.65rem;font-weight:700;line-height:1.15;color:#f6e9ed}
+.reco-card{position:relative;background:rgba(20,10,14,.55);border:1px solid rgba(215,154,170,.12);border-radius:1.1rem;padding:1.1rem 1.2rem;margin-bottom:.9rem}
+.reco-card:last-child{margin-bottom:0}
+.reco-card-title{font-size:1.2rem;font-weight:700;color:#e8c887;margin:0 0 .55rem;letter-spacing:.005em}
+.reco-card-note{color:rgba(246,233,237,.78);font-size:.97rem;line-height:1.5;margin:0 0 .85rem}
+.reco-pills{display:flex;flex-wrap:wrap;gap:.5rem}
+.reco-pill{display:inline-flex;align-items:center;padding:.5rem .85rem;border-radius:999px;background:rgba(232,200,135,.08);border:1px solid rgba(232,200,135,.22);color:#e8c887;font-size:.82rem;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+.reco-empty{position:relative;color:rgba(246,233,237,.7);font-size:.95rem;padding:1rem 0 .3rem}
 #reportContent{display:none}#reportContent.active{display:block}#reportContent .rpt-section{margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--dv)}#reportContent .rpt-section:first-of-type{border-top:none;margin-top:var(--s4);padding-top:0}#reportContent h3{margin:0 0 .5rem;color:var(--pri);font-size:var(--text-lg)}#reportContent h4{margin:.75rem 0 .35rem;font-size:var(--text-base)}#reportContent .rpt-item{padding:var(--s3) 0;border-bottom:1px dashed var(--dv)}#reportContent .rpt-item:last-child{border-bottom:none}#reportContent .rpt-meta{font-size:var(--text-xs);color:var(--mut);margin-top:.2rem}#reportContent .rpt-why{font-size:var(--text-sm);margin-top:.35rem;line-height:1.45}#reportContent .rpt-price{font-weight:700;color:var(--pri);font-size:var(--text-sm)}#reportContent ul{margin:.4rem 0 .4rem 1.2rem;padding:0}#reportContent ul li{margin:.3rem 0;font-size:var(--text-sm);line-height:1.5}#reportContent .rpt-header{margin-bottom:var(--s4)}#reportContent .rpt-header h2{margin:0;font-size:var(--text-xl);color:var(--pri)}#reportContent .rpt-header p{margin:.25rem 0 0;color:var(--mut)}#reportContent .rpt-intro{font-size:var(--text-sm);color:var(--mut);margin-bottom:var(--s3)}@media print{@page{margin:0.6in}html,body{background:#fff!important;color:#000!important;overflow:visible!important;height:auto!important}body{display:block!important}body *{visibility:hidden!important}#reportContent,#reportContent *{visibility:visible!important}#reportContent{position:absolute!important;left:0;top:0;width:100%;padding:0;margin:0;background:#fff!important;color:#000!important;box-shadow:none!important;border:none!important;display:block!important}#reportContent h2,#reportContent h3,#reportContent h4{color:#000!important;page-break-after:avoid}#reportContent .rpt-price{color:#000!important}#reportContent .rpt-section{border-top:1px solid #555!important;page-break-inside:avoid;margin-top:1rem;padding-top:.75rem}#reportContent .rpt-section:first-of-type{border-top:none!important}#reportContent .rpt-item{border-bottom:1px dashed #888!important;page-break-inside:avoid}#reportContent .rpt-meta{color:#444!important}#reportContent .rpt-intro,#reportContent .rpt-header p{color:#333!important}}
 </style>
 </head>
@@ -35,14 +53,159 @@ function setTheme(next){document.documentElement.dataset.theme=next;$('#themeLab
 $('#themeBtn').onclick=$('#menuBtn').onclick=()=>$('#sidebar').classList.toggle('open');
 $$('[data-view-btn]').forEach(b=>b.onclick=()=>showView(b.dataset.viewBtn));
 function showView(v){['overview','service','manager','analytics','settings'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));$$('[data-view-btn]').forEach(b=>b.classList.toggle('active',b.dataset.viewBtn===v));$('#sidebar').classList.remove('open')}
-function score(w,d,o){let s=0,h=[];d.tags.forEach(t=>{if(w.pairingTags.includes(t)){s+=18;h.push(t)}});if(d.protein==='beef'&&w.tannin>=4)s+=14;if(d.protein==='seafood'&&w.color!=='Red')s+=12;if(d.protein==='duck'&&w.color==='Red')s+=10;if(d.tags.includes('cream')&&w.acidity>=3)s+=8;if(o.guestStyle==='light'&&w.body==='Light')s+=8;if(o.guestStyle==='bold'&&w.body==='Full')s+=8;if(o.guestStyle==='fruit'&&/fruit|citrus/i.test(w.notes))s+=8;if(o.budget==='glass'&&w.byGlass)s+=10;if(o.budget==='under50'&&w.priceBottle<50)s+=8;if(o.budget==='premium'&&w.priceBottle>=70)s+=8;s+=w.priority*1.5;if(w.featured)s+=6;if(o.focus==='priority')s+=state.campaign.boost + w.priority*1.5;if(o.focus==='safe'&&h.length>=2)s+=10;if(w.inventory<=0)s=-999;return{score:s,hits:h,campaign:w.featured&&state.campaign.name?state.campaign.name:''}}
-function summary(w,d,h){const lead=h.length?`It lines up with the ${h.slice(0,2).join(' and ')} notes in the dish.`:'It fits the dish without overpowering it.'; return `${w.name} is a ${w.body.toLowerCase()}-bodied ${w.varietal} from ${w.region}. ${lead} ${w.notes}`}
+function parseGuestNotes(text){
+  const t=String(text||'').toLowerCase(); const cues={raw:text||''};
+  cues.lighter=/lighter|light(-|\s)?body|lower alcohol|easy[- ]drinking|delicate/.test(t);
+  cues.bolder=/bolder|fuller|big red|powerful|robust/.test(t);
+  cues.avoidOak=/no oak|avoid oak|unoaked|without oak|less oak|stainless/.test(t);
+  cues.budget=/budget|value|inexpensive|affordable|on sale|cheaper|under \$?\d+|low price/.test(t);
+  cues.premium=/splurg|premium|reserve|special occasion|celebrat|trophy|high[- ]end|top[- ]shelf/.test(t);
+  cues.adventurous=/adventur|surprise|something different|new|unusual|off the beaten|exotic|orange wine|natural/.test(t);
+  cues.noRed=/no red|avoid red|don'?t want red|hates? red|not? red/.test(t);
+  cues.noWhite=/no white|avoid white|don'?t want white|hates? white|not? white/.test(t);
+  cues.lovesChardonnay=/love[s]? chardonnay|chardonnay fan|always chardonnay/.test(t);
+  cues.lovesPinot=/love[s]? pinot|pinot noir fan/.test(t);
+  cues.lovesCab=/love[s]? cab|cabernet fan|big cab/.test(t);
+  cues.celebration=/birthday|anniversary|celebrat|engagement|honeymoon/.test(t);
+  cues.spice=/spicy|spice|heat|chili|hot/.test(t);
+  cues.dry=/dry only|bone[- ]dry|no sweet|not sweet/.test(t);
+  cues.sweet=/sweet|off[- ]dry|fruity/.test(t);
+  cues.priceCap=null;
+  const m=t.match(/under \$?(\d{2,3})|less than \$?(\d{2,3})|max(?:imum)? \$?(\d{2,3})|\$(\d{2,3}) (?:or|and) (?:under|less)/);
+  if(m){ const v=m[1]||m[2]||m[3]||m[4]; cues.priceCap=Number(v); }
+  return cues;
+}
+function score(w,d,o,cues){let s=0,h=[];d.tags.forEach(t=>{if(w.pairingTags.includes(t)){s+=18;h.push(t)}});if(d.protein==='beef'&&w.tannin>=4)s+=14;if(d.protein==='seafood'&&w.color!=='Red')s+=12;if(d.protein==='duck'&&w.color==='Red')s+=10;if(d.tags.includes('cream')&&w.acidity>=3)s+=8;if(o.guestStyle==='light'&&w.body==='Light')s+=8;if(o.guestStyle==='bold'&&w.body==='Full')s+=8;if(o.guestStyle==='fruit'&&/fruit|citrus/i.test(w.notes))s+=8;if(o.budget==='glass'&&w.byGlass)s+=10;if(o.budget==='under50'&&w.priceBottle<50)s+=8;if(o.budget==='premium'&&w.priceBottle>=70)s+=8;s+=w.priority*1.5;if(w.featured)s+=6;if(o.focus==='priority')s+=state.campaign.boost + w.priority*1.5;if(o.focus==='safe'&&h.length>=2)s+=10;
+  // Guest-notes-aware adjustments
+  if(cues){
+    if(cues.lighter){ if(w.body==='Light') s+=12; else if(w.body==='Full') s-=8; }
+    if(cues.bolder){ if(w.body==='Full') s+=10; else if(w.body==='Light') s-=6; }
+    if(cues.avoidOak){ if((w.oak||0)>=3) s-=14; else if((w.oak||0)<=1) s+=6; }
+    if(cues.budget){ if(w.priceBottle && w.priceBottle<=55) s+=10; else if(w.priceBottle>=100) s-=10; }
+    if(cues.premium){ if(w.priceBottle>=90) s+=10; if(w.featured) s+=4; }
+    if(cues.adventurous){ if(/orange|natural|skin|amphora|pet[- ]?nat|gamay|chenin|grüner|gruner|viognier|barbera|carmen|mourv|verm/i.test(w.varietal+' '+(w.notes||''))) s+=10; }
+    if(cues.noRed && w.color==='Red') s-=40;
+    if(cues.noWhite && w.color==='White') s-=40;
+    if(cues.lovesChardonnay && /chardonnay/i.test(w.varietal)) s+=14;
+    if(cues.lovesPinot && /pinot noir/i.test(w.varietal)) s+=14;
+    if(cues.lovesCab && /cabernet/i.test(w.varietal)) s+=14;
+    if(cues.celebration && w.color==='Sparkling') s+=8;
+    if(cues.spice && (/riesling|gewürz|gewurz|chenin|moscato|muscat/i.test(w.varietal) || (w.color==='Sparkling'))) s+=8;
+    if(cues.dry && (w.sweetness||1)>=3) s-=12;
+    if(cues.sweet && (w.sweetness||1)>=2) s+=6;
+    if(cues.priceCap && w.priceBottle && w.priceBottle>cues.priceCap) s-=15;
+  }
+  if(w.inventory<=0)s=-999;return{score:s,hits:h,campaign:w.featured&&state.campaign.name?state.campaign.name:''}}
+function summary(w,d,h,cues){
+  // Build a concise 1-2 sentence pairing note. Lead with structural fit, then a guest-aware lens.
+  const sentences=[];
+  const hitText=h.length?`${h.slice(0,2).join(' and ')} notes`:`structural fit`;
+  if(d.protein==='beef' && w.tannin>=4){
+    sentences.push(`Structured tannins match the ${d.name.toLowerCase()}'s richness while ${(w.notes||'').toLowerCase().includes('oak')||(w.oak||0)>=3?'dark fruit and oak notes':'savory dark fruit'} complement the dish.`);
+  } else if(d.protein==='seafood' && w.color!=='Red' && w.body==='Light'){
+    sentences.push(`Bright acidity and ${(w.notes||'').toLowerCase().includes('citrus')?'citrus lift':'mineral cut'} mirror the freshness of the ${d.name.toLowerCase()}.`);
+  } else if(d.protein==='duck' && w.color==='Red'){
+    sentences.push(`Silky red fruit and earthy lift balance the duck without overwhelming it.`);
+  } else if(h.length>=2){
+    sentences.push(`Lines up with the ${hitText} in the dish for a clean, table-friendly match.`);
+  } else if(w.body==='Light'){
+    sentences.push(`An elegant alternative with bright acidity and a savory finish that doesn't crowd the dish.`);
+  } else if(w.body==='Full'){
+    sentences.push(`A full-bodied option with depth and grip that matches the weight of the dish.`);
+  } else {
+    sentences.push(`A balanced pour that fits the dish without overpowering it.`);
+  }
+  // Guest-notes overlay (one short sentence)
+  if(cues){
+    if(cues.lighter && w.body==='Light') sentences.push(`Suits the table's preference for a lighter body.`);
+    else if(cues.bolder && w.body==='Full') sentences.push(`Delivers the bolder profile the table is looking for.`);
+    else if(cues.avoidOak && (w.oak||0)<=2) sentences.push(`Minimal oak influence aligns with the guest note.`);
+    else if(cues.lovesChardonnay && /chardonnay/i.test(w.varietal)) sentences.push(`Chardonnay-forward to match a stated preference.`);
+    else if(cues.lovesPinot && /pinot noir/i.test(w.varietal)) sentences.push(`Pinot Noir to match a stated preference.`);
+    else if(cues.budget && w.priceBottle && w.priceBottle<=55) sentences.push(`Comes in under the table's value target.`);
+    else if(cues.premium && w.priceBottle>=90) sentences.push(`A premium pour fitting the table's special-occasion ask.`);
+    else if(cues.adventurous) sentences.push(`Slightly off the beaten path for a more adventurous palate.`);
+    else if(cues.celebration && w.color==='Sparkling') sentences.push(`Sparkling lift for the celebration.`);
+  }
+  return sentences.slice(0,2).join(' ');
+}
 function guestBottleSummary(w){ return `${w.name} is a ${w.body.toLowerCase()}-bodied ${w.color.toLowerCase()} wine made from ${w.varietal||'classic grapes'}${w.region?` in ${w.region}`:''}. It shows ${w.notes||'balanced structure'} and should work best with dishes that match its ${w.tags.slice(0,2).join(' and ')||'overall style'}.`; }
 function scoreDishForGuestWine(w,d){ let s=0,hits=[]; d.tags.forEach(t=>{ if(w.tags.includes(t)){ s+=18; hits.push(t); } }); if(d.protein==='beef'&&w.tannin>=4)s+=14; if(d.protein==='seafood'&&w.color!=='Red')s+=12; if(d.tags.includes('cream')&&w.acidity>=3)s+=8; if(d.protein==='duck'&&w.color==='Red')s+=10; if(w.body==='Light'&&d.style==='light')s+=8; if(w.body==='Full'&&d.style==='bold')s+=8; return {score:s,hits}; }
-function recs(){ const selected=$('#dishSelect')?.value||''; const d=state.dishes.find(x=>x.id===selected); if(!d) return []; const o={guestStyle:$('#guestStyle').value||'any',budget:$('#budget').value||'any',focus:$('#focus').value||'balanced'}; return state.wines.map(w=>{const r=score(w,d,o);return {...w,...r,summary:summary(w,d,r.hits),dish:d.name}}).filter(x=>x.score>-500).sort((a,b)=>b.score-a.score).slice(0,3)}
-function updateServiceRecommendations(){ const arr=recs(); if(!$('#dishSelect').value){ $('#recs').innerHTML='<div class="item"><strong>Select a dish to view recommendations</strong><div class="tiny muted" style="margin-top:var(--s2)">Choose a menu item first, then the pairing suggestions will appear here.</div></div>'; return; } $('#recs').innerHTML=arr.map((w,i)=>`<div class="item"><div class="row"><div><div class="tiny muted">Option ${i+1}</div><strong>${esc(w.name)}</strong><div class="tiny muted">${esc(w.varietal)} · ${esc(w.region)}</div></div><span class="pill priority">${Math.max(72,Math.min(98,Math.round(w.score)))}%</span></div><div class="inline">${w.featured?'<span class="pill priority">Featured</span>':''}${w.byGlass?'<span class="pill good">By the glass</span>':'<span class="pill">Bottle only</span>'}<span class="pill">Priority ${w.priority}</span></div><div class="tiny">${esc(w.summary)}</div><div class="hero-note"><strong>Server script:</strong> “${esc(w.name)} is a strong match for the ${w.dish.toLowerCase()} because ${esc((w.notes||'it fits the table well').split('. ')[0].toLowerCase())}.”</div></div>`).join(''); }
+function recs(){ const selected=$('#dishSelect')?.value||''; const d=state.dishes.find(x=>x.id===selected); if(!d) return []; const o={guestStyle:$('#guestStyle').value||'any',budget:$('#budget').value||'any',focus:$('#focus').value||'balanced'}; const cues=parseGuestNotes($('#tableNote')?.value||''); return state.wines.map(w=>{const r=score(w,d,o,cues);return {...w,...r,summary:summary(w,d,r.hits,cues),dish:d.name}}).filter(x=>x.score>-500).sort((a,b)=>b.score-a.score).slice(0,3)}
+function priceLabel(w){
+  const g=Number(w.glassPrice||w.priceGlass||0);
+  const b=Number(w.priceBottle||0);
+  if(w.byGlass && g>0 && b>0) return `$${g} Glass / $${b} Bottle`;
+  if(g>0) return `$${g} Glass`;
+  if(b>0) return `$${b} Bottle`;
+  return '';
+}
+function detectInventoryGap(d,arr,cues){
+  if(!d) return null;
+  const dTags=(d.tags||[]).map(t=>String(t).toLowerCase());
+  // Beef / steak gap: missing premium Left Bank Bordeaux / structured Cab when steak is the dish.
+  const isSteak=d.protein==='beef' || dTags.some(t=>/steak|filet|ribeye|tenderloin|wagyu/.test(t));
+  const hasLeftBank=(state.wines||[]).some(w=>/bordeaux|left bank|pauillac|st[- ]?est[èe]phe|st[- ]?julien|margaux|lynch|pichon/i.test((w.region||'')+' '+(w.name||'')));
+  const hasPremiumCab=(state.wines||[]).some(w=>/cabernet/i.test(w.varietal)&&w.priceBottle>=110&&w.inventory>0);
+  if(isSteak && !hasLeftBank && !cues?.noRed){
+    return {title:'Inventory Gap Detected',note:`Add a Left Bank Bordeaux option to strengthen premium ${dTags.includes('steak')||/steak|filet|ribeye/.test(d.name.toLowerCase())?'steak':'beef'} pairings and support higher bottle sales.`,pills:['Suggested Purchase','High Menu Fit']};
+  }
+  // Seafood gap: missing a quality Champagne / sparkling for raw bar.
+  const isRawBar=dTags.some(t=>/oyster|raw|crudo|tartare|sashimi|shellfish/.test(t));
+  const hasChampagne=(state.wines||[]).some(w=>/champagne/i.test((w.region||'')+' '+(w.varietal||''))&&w.inventory>0);
+  if(isRawBar && !hasChampagne){
+    return {title:'Inventory Gap Detected',note:`Add a grower Champagne to elevate raw-bar and shellfish service and unlock higher-margin bottle pours.`,pills:['Suggested Purchase','High Menu Fit']};
+  }
+  // Spice gap: no Riesling on the list but spicy dish.
+  const isSpice=cues?.spice || dTags.some(t=>/spice|spicy|curry|chili|harissa/.test(t));
+  const hasRiesling=(state.wines||[]).some(w=>/riesling/i.test(w.varietal)&&w.inventory>0);
+  if(isSpice && !hasRiesling){
+    return {title:'Inventory Gap Detected',note:`Add an off-dry German Riesling to handle spice-driven dishes and round out the white program.`,pills:['Suggested Purchase','High Menu Fit']};
+  }
+  // Duck / mushroom / truffle gap: no Pinot Noir.
+  const wantsPinot=dTags.some(t=>/duck|mushroom|truffle|salmon|earthy/.test(t));
+  const hasPinot=(state.wines||[]).some(w=>/pinot noir/i.test(w.varietal)&&w.inventory>0);
+  if(wantsPinot && !hasPinot && !cues?.noRed){
+    return {title:'Inventory Gap Detected',note:`Add a Willamette or Burgundy Pinot Noir to bridge duck, salmon, and mushroom dishes for higher pairing conversion.`,pills:['Suggested Purchase','High Menu Fit']};
+  }
+  return null;
+}
+function badgeFor(w,i,arr){
+  // Primary contextual label based on rank/featured/priority.
+  if(i===0){
+    if(w.priceBottle>=90 || w.featured) return 'Best Premium Pairing';
+    return 'Best Pairing';
+  }
+  if(w.featured && state.campaign?.name) return 'Manager Priority';
+  if(w.priority>=6) return 'Manager Priority';
+  if(w.byGlass) return 'By the Glass';
+  return 'Server Pick';
+}
+function updateServiceRecommendations(){
+  const recsEl=$('#recs'); if(!recsEl) return;
+  const dishVal=$('#dishSelect').value;
+  if(!dishVal){
+    recsEl.innerHTML=`<div class="reco-module"><div class="reco-header"><div class="reco-dots"><span></span><span></span><span></span></div><div class="reco-live-pill">Live Wine Inventory</div></div><div class="reco-empty">Select a dish to view recommendations. Choose a menu item first and the pairing suggestions will appear here.</div></div>`;
+    return;
+  }
+  const arr=recs();
+  const d=state.dishes.find(x=>x.id===dishVal);
+  const cues=parseGuestNotes($('#tableNote')?.value||'');
+  const gap=detectInventoryGap(d,arr,cues);
+  const dishName=d?d.name:'';
+  const cards=arr.map((w,i)=>{
+    const num=i+1;
+    const badge=badgeFor(w,i,arr);
+    const price=priceLabel(w);
+    const pills=[`<span class="reco-pill">${esc(badge)}</span>`];
+    if(price) pills.push(`<span class="reco-pill">${esc(price)}</span>`);
+    return `<div class="reco-card"><h4 class="reco-card-title">${num}. ${esc(w.name)}</h4><p class="reco-card-note">${esc(w.summary)}</p><div class="reco-pills">${pills.join('')}</div></div>`;
+  }).join('');
+  const gapCard = gap ? `<div class="reco-card"><h4 class="reco-card-title">${esc(gap.title)}</h4><p class="reco-card-note">${esc(gap.note)}</p><div class="reco-pills">${gap.pills.map(p=>`<span class="reco-pill">${esc(p)}</span>`).join('')}</div></div>` : '';
+  recsEl.innerHTML = `<div class="reco-module"><div class="reco-header"><div class="reco-dots"><span></span><span></span><span></span></div><div class="reco-live-pill">Live Wine Inventory</div></div><div class="reco-meal"><div class="reco-meal-label">Meal Selection</div><div class="reco-meal-name">${esc(dishName)}</div></div>${cards||'<div class="reco-empty">No in-stock pairings found for this dish with current filters.</div>'}${gapCard}</div>`;
+}
 function renderOverview(){ const activeWines=state.wines.filter(w=>w.inventory>0).length; const events=state.events.length; $('#kpiWines').textContent=activeWines; $('#kpiPriority').textContent=state.wines.filter(w=>w.featured||w.priority>0).length; $('#kpiEvents').textContent=events; const a=document.getElementById('kpiWinesHero'); if(a) a.textContent=activeWines; const b=document.getElementById('kpiEventsHero'); if(b) b.textContent=events; const c=document.getElementById('kpiDishesHero'); if(c) c.textContent=state.dishes.length; $('#campaignName').value=state.campaign.name; $('#campaignBoost').value=String(state.campaign.boost); $('#campaignStatus').textContent=state.campaign.name?`${state.campaign.name} active`:'No active campaign.'; $('#roleBadge').textContent=state.role[0].toUpperCase()+state.role.slice(1); }
-function renderService(){ const current=$('#dishSelect')?.value||''; $('#dishSelect').innerHTML='<option value=>Select a dish</option>'+state.dishes.map(d=>`<option value="${d.id}" ${d.id===current?'selected':''}>${esc(d.name)}</option>`).join(''); $('#guestStyle').value=$('#guestStyle').value||'any'; $('#budget').value=$('#budget').value||'any'; $('#focus').value=$('#focus').value||'balanced'; updateServiceRecommendations(); $('#dishSelect').onchange=updateServiceRecommendations; $('#guestStyle').onchange=updateServiceRecommendations; $('#budget').onchange=updateServiceRecommendations; $('#focus').onchange=updateServiceRecommendations; }
+function renderService(){ const current=$('#dishSelect')?.value||''; $('#dishSelect').innerHTML='<option value=>Select a dish</option>'+state.dishes.map(d=>`<option value="${d.id}" ${d.id===current?'selected':''}>${esc(d.name)}</option>`).join(''); $('#guestStyle').value=$('#guestStyle').value||'any'; $('#budget').value=$('#budget').value||'any'; $('#focus').value=$('#focus').value||'balanced'; updateServiceRecommendations(); $('#dishSelect').onchange=updateServiceRecommendations; $('#guestStyle').onchange=updateServiceRecommendations; $('#budget').onchange=updateServiceRecommendations; $('#focus').onchange=updateServiceRecommendations; const tn=$('#tableNote'); if(tn) tn.oninput=updateServiceRecommendations; }
 function renderWineSelect(){ const opts=['<option value="__add__">Add wine</option>'].concat([...state.wines].sort((a,b)=>a.name.localeCompare(b.name)).map(w=>`<option value="${w.id}">${esc(w.name)}</option>`)); $('#wineSelect').innerHTML=opts.join(''); $('#wineSelect').value=$('#wineId').value||'__add__'; } function renderDishSelect(){ const opts=['<option value="__add__">Add meal</option>'].concat([...state.dishes].sort((a,b)=>a.name.localeCompare(b.name)).map(d=>`<option value="${d.id}">${esc(d.name)}</option>`)); $('#dishSelectManage').innerHTML=opts.join(''); $('#dishSelectManage').value=$('#dishId').value||'__add__'; } function renderManager(){ renderWineSelect(); renderDishSelect(); const q=$('#searchWine').value.toLowerCase().trim(),f=$('#filterWine').value; const data=[...state.wines].sort((a,b)=>(b.priority+(b.featured?2:0))-(a.priority+(a.featured?2:0))).filter(w=>{const hay=`${w.name} ${w.varietal} ${w.region} ${w.pairingTags.join(' ')}`.toLowerCase(); if(q&&!hay.includes(q)) return false; if(f==='featured'&&!w.featured) return false; if(f==='glass'&&!w.byGlass) return false; return true}); $('#wineList').innerHTML=data.map(w=>`<div class="item"><div class="row"><div><strong>${esc(w.name)}</strong><div class="tiny muted">${esc(w.varietal)} · ${esc(w.region)} · $${w.priceBottle}</div></div><div class="inline">${w.featured?'<span class="pill priority">Featured</span>':''}<span class="pill">Priority ${w.priority}</span></div></div><div class="tiny">${esc(w.notes)}</div><div class="tiny muted">Tags: ${esc(w.pairingTags.join(', '))} · Inventory: ${w.inventory}</div><div class="inline"><button class="btn btn-secondary" onclick="editWine('${w.id}')">Edit</button><button class="btn btn-secondary" onclick="toggleFeature('${w.id}')">${w.featured?'Unfeature':'Feature'}</button><button class="btn btn-ghost" onclick="bump('${w.id}',1)">Priority +1</button><button class="btn btn-ghost" onclick="bump('${w.id}',-1)">Priority -1</button></div></div>`).join('') || '<div class="tiny muted">No wines found.</div>' }
 function renderAnalytics(){ const sold=state.events.filter(e=>e.type==='sale'); const paired=state.events.filter(e=>e.type==='pair'); const countTop=arr=>Object.entries(arr.reduce((m,e)=>(m[e.wine]=(m[e.wine]||0)+1,m),{})).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'; $('#topReco').textContent=countTop(paired); $('#topSold').textContent=countTop(sold); const influenced=paired.length?Math.round((paired.filter(e=>e.campaign).length/paired.length)*100):0; $('#campaignHit').textContent=influenced+'%'; $('#eventRows').innerHTML=state.events.slice().reverse().slice(0,10).map(e=>`<tr><td>${new Date(e.time).toLocaleString()}</td><td>${esc(e.dish||'—')}</td><td>${esc(e.wine||'—')}</td><td>${esc(e.score??'—')}</td><td>${esc(e.campaign||'—')}</td></tr>`).join('') || '<tr><td colspan="5" class="tiny muted">No events yet.</td></tr>' }
 function renderBranding(){ const _brandName=state.branding.name||'TableSomm'; const _brandSub=state.branding.subtitle||'Manager + server workspace'; $('#brandRestaurantName').textContent=_brandName; $('#brandTagline').textContent=_brandSub; $('#mobileBrandName').textContent=_brandName; const _mSub=$('#mobileBrandSubtitle'); if(_mSub) _mSub.textContent=_brandSub; const _heroPill=$('#heroBrandPill'); if(_heroPill) _heroPill.textContent=_brandName; document.title=`${_brandName} | TableSomm`; const logo=state.branding.logo||''; const deskLogo=document.querySelector('.logo svg'); const mLogo=$('#mobileBrandLogo'); if(logo){ if(deskLogo) deskLogo.style.display='none'; let img=document.getElementById('brandDeskLogo'); if(!img){ img=document.createElement('img'); img.id='brandDeskLogo'; img.alt='Restaurant logo'; img.style.cssText='width:46px;height:46px;border-radius:12px;object-fit:contain;background:#fff;padding:.2rem;border:1px solid var(--bd)'; document.querySelector('.logo').insertBefore(img, document.querySelector('.logo').firstChild); } img.src=logo; img.style.display='block'; mLogo.src=logo; mLogo.style.display='block'; const heroLogo=document.querySelector('.hero-logo img'); if(heroLogo){ heroLogo.src=logo; heroLogo.style.visibility='visible'; } } else { const img=document.getElementById('brandDeskLogo'); if(img) img.style.display='none'; if(deskLogo) deskLogo.style.display='block'; mLogo.style.display='none'; const heroLogo=document.querySelector('.hero-logo img'); if(heroLogo){ heroLogo.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; heroLogo.style.visibility='hidden'; } } $('#restaurantName').value=state.branding.name||''; $('#restaurantSubtitle').value=state.branding.subtitle||''; }
