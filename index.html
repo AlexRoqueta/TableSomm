@@ -132,10 +132,118 @@ function summary(w,d,h,cues){
 function guestBottleSummary(w){ return `${w.name} is a ${w.body.toLowerCase()}-bodied ${w.color.toLowerCase()} wine made from ${w.varietal||'classic grapes'}${w.region?` in ${w.region}`:''}. It shows ${w.notes||'balanced structure'} and should work best with dishes that match its ${w.tags.slice(0,2).join(' and ')||'overall style'}.`; }
 function scoreDishForGuestWine(w,d){ let s=0,hits=[]; d.tags.forEach(t=>{ if(w.tags.includes(t)){ s+=18; hits.push(t); } }); if(d.protein==='beef'&&w.tannin>=4)s+=14; if(d.protein==='seafood'&&w.color!=='Red')s+=12; if(d.tags.includes('cream')&&w.acidity>=3)s+=8; if(d.protein==='duck'&&w.color==='Red')s+=10; if(w.body==='Light'&&d.style==='light')s+=8; if(w.body==='Full'&&d.style==='bold')s+=8; return {score:s,hits}; }
 function recs(){ const selected=$('#dishSelect')?.value||''; const d=state.dishes.find(x=>x.id===selected); if(!d) return []; const o={guestStyle:$('#guestStyle').value||'any',budget:$('#budget').value||'any',focus:$('#focus').value||'balanced'}; const cues=parseGuestNotes($('#tableNote')?.value||''); return state.wines.map(w=>{const r=score(w,d,o,cues);return {...w,...r,summary:summary(w,d,r.hits,cues),dish:d.name}}).filter(x=>x.score>-500).sort((a,b)=>b.score-a.score).slice(0,3)}
+// Robust price extraction: scans many possible field shapes that imports
+// may produce (bottle_price, bottlePrice, price_bottle, bottle, bottlePriceCents,
+// nested prices.bottle, arrays like priceRecords / price_records / offerings /
+// servings / priceTiers where size/type/tier/label is bottle and price is
+// value/price/amount/cost). Returns {bottle, glass, half, carafe} numbers or 0.
+function _coercePriceNum(v){
+  if(v==null||v==='') return null;
+  if(typeof v==='number') return Number.isFinite(v)&&v>0?v:null;
+  const s=String(v).replace(/[^0-9.\-]/g,'');
+  if(!s) return null;
+  const n=Number(s);
+  return Number.isFinite(n)&&n>0?n:null;
+}
+function _coerceCents(v){
+  const n=_coercePriceNum(v);
+  return n!=null ? n/100 : null;
+}
+function _labelMatchesBottle(s){ return /bottle|btl|750|full[- ]?bottle/i.test(s) && !/half[- ]?bottle|1\/2/i.test(s); }
+function _labelMatchesGlass(s){ return /\bglass\b|by[- ]the[- ]glass|\bbtg\b|by[- ]glass/i.test(s); }
+function _labelMatchesHalf(s){ return /half[- ]?bottle|375|1\/2/i.test(s); }
+function _labelMatchesCarafe(s){ return /carafe|pitcher|quartino|500/i.test(s); }
+function _entryLabel(t){
+  if(!t||typeof t!=='object') return '';
+  return String(t.label||t.type||t.size||t.tier||t.serving||t.servingSize||t.unit||t.name||t.pour||'').toLowerCase();
+}
+function _entryPrice(t){
+  if(!t||typeof t!=='object') return null;
+  let p=_coercePriceNum(t.price);
+  if(p==null) p=_coercePriceNum(t.value);
+  if(p==null) p=_coercePriceNum(t.amount);
+  if(p==null) p=_coercePriceNum(t.cost);
+  if(p==null) p=_coercePriceNum(t.usd);
+  if(p==null) p=_coercePriceNum(t.priceUsd);
+  if(p==null) p=_coercePriceNum(t.priceUSD);
+  if(p==null) p=_coerceCents(t.priceCents);
+  if(p==null) p=_coerceCents(t.amountCents);
+  return p;
+}
+function extractWinePrices(r){
+  r=r||{};
+  const out={bottle:null,glass:null,half:null,carafe:null};
+  // 1) Direct scalar fields, many naming variants
+  const bottleFields=['priceBottle','bottlePrice','bottle_price','price_bottle','bottle','bottlePriceUsd','priceBottleUsd','bottlePriceUSD','priceBtl','btlPrice','btl_price','priceFull','fullBottlePrice','price'];
+  for(const f of bottleFields){
+    if(out.bottle==null){ const v=_coercePriceNum(r[f]); if(v!=null) out.bottle=v; }
+  }
+  // Cents-denominated bottle fields
+  if(out.bottle==null){
+    const centsFields=['bottlePriceCents','priceBottleCents','bottle_price_cents','bottleCents','priceCents'];
+    for(const f of centsFields){ const v=_coerceCents(r[f]); if(v!=null){ out.bottle=v; break; } }
+  }
+  const glassFields=['glassPrice','priceGlass','glass_price','price_glass','byGlassPrice','by_glass_price','btgPrice','btg_price','priceBtg','glass','pourPrice','pour_price'];
+  for(const f of glassFields){
+    if(out.glass==null){ const v=_coercePriceNum(r[f]); if(v!=null) out.glass=v; }
+  }
+  if(out.glass==null){
+    const centsFields=['glassPriceCents','priceGlassCents','glass_price_cents','glassCents'];
+    for(const f of centsFields){ const v=_coerceCents(r[f]); if(v!=null){ out.glass=v; break; } }
+  }
+  const halfFields=['halfBottlePrice','priceHalfBottle','half_bottle_price','halfPrice','price_half','halfBottle'];
+  for(const f of halfFields){
+    if(out.half==null){ const v=_coercePriceNum(r[f]); if(v!=null) out.half=v; }
+  }
+  const carafeFields=['carafePrice','priceCarafe','carafe_price','carafe','quartinoPrice','pitcherPrice'];
+  for(const f of carafeFields){
+    if(out.carafe==null){ const v=_coercePriceNum(r[f]); if(v!=null) out.carafe=v; }
+  }
+  // 2) Nested prices object
+  const prices=(r.prices && typeof r.prices==='object') ? r.prices : null;
+  if(prices){
+    if(out.bottle==null) out.bottle=_coercePriceNum(prices.bottle) || _coercePriceNum(prices.btl) || _coercePriceNum(prices.full) || _coerceCents(prices.bottleCents);
+    if(out.glass==null) out.glass=_coercePriceNum(prices.glass) || _coercePriceNum(prices.btg) || _coerceCents(prices.glassCents);
+    if(out.half==null) out.half=_coercePriceNum(prices.halfBottle) || _coercePriceNum(prices.half) || _coercePriceNum(prices['half-bottle']) || _coercePriceNum(prices['half_bottle']);
+    if(out.carafe==null) out.carafe=_coercePriceNum(prices.carafe) || _coercePriceNum(prices.quartino) || _coercePriceNum(prices.pitcher);
+  }
+  // 3) Array shapes: priceTiers, priceRecords, price_records, offerings, servings, pours, sizes, options, variants
+  const arrayCandidates=['priceTiers','priceRecords','price_records','offerings','servings','pours','sizes','options','variants','prices'];
+  for(const key of arrayCandidates){
+    const arr=r[key];
+    if(!Array.isArray(arr)) continue;
+    for(const t of arr){
+      if(!t || typeof t!=='object') continue;
+      const label=_entryLabel(t);
+      const p=_entryPrice(t);
+      if(p==null) continue;
+      if(out.bottle==null && _labelMatchesBottle(label)) out.bottle=p;
+      else if(out.glass==null && _labelMatchesGlass(label)) out.glass=p;
+      else if(out.half==null && _labelMatchesHalf(label)) out.half=p;
+      else if(out.carafe==null && _labelMatchesCarafe(label)) out.carafe=p;
+    }
+  }
+  // 4) Heuristic fallback: if we still have nothing but a plain numeric "price",
+  // treat it as bottle pricing (common in simplified imports).
+  if(out.bottle==null && out.glass==null){
+    const fallback=_coercePriceNum(r.price);
+    if(fallback!=null) out.bottle=fallback;
+  }
+  return {
+    bottle: out.bottle!=null ? out.bottle : 0,
+    glass: out.glass!=null ? out.glass : 0,
+    half: out.half!=null ? out.half : 0,
+    carafe: out.carafe!=null ? out.carafe : 0
+  };
+}
 function priceLabel(w){
-  const g=Number(w.glassPrice||w.priceGlass||0);
-  const b=Number(w.priceBottle||0);
-  if(w.byGlass && g>0 && b>0) return `$${g} Glass / $${b} Bottle`;
+  // Re-extract from the wine record in case it was imported with alternate
+  // field shapes and not fully normalized (defense in depth — keeps the UI
+  // showing bottle/glass pricing whenever a value exists anywhere on the record).
+  const ex=extractWinePrices(w);
+  const g=Number(w.glassPrice||w.priceGlass||ex.glass||0);
+  const b=Number(w.priceBottle||ex.bottle||0);
+  if(g>0 && b>0) return `$${g} Glass / $${b} Bottle`;
   if(g>0) return `$${g} Glass`;
   if(b>0) return `$${b} Bottle`;
   return '';
@@ -335,34 +443,11 @@ function normalize(r){
     else oak = 2;
   }
 
-  function priceNum(v){ if(v==null||v==='') return null; const s=String(v).replace(/[^0-9.\-]/g,''); const n=Number(s); return Number.isFinite(n)&&n>0?n:null; }
-  const prices = (r.prices && typeof r.prices==='object') ? r.prices : {};
-  let priceBottle = priceNum(r.priceBottle);
-  if(priceBottle==null) priceBottle = priceNum(r.bottlePrice);
-  if(priceBottle==null) priceBottle = priceNum(prices.bottle);
-  if(priceBottle==null && Array.isArray(r.priceTiers)){
-    for(const t of r.priceTiers){
-      if(t && typeof t==='object'){
-        const label=String(t.label||t.type||t.size||'').toLowerCase();
-        if(/bottle|750/.test(label)){ const p=priceNum(t.price); if(p!=null){ priceBottle=p; break; } }
-      }
-    }
-  }
-  if(priceBottle==null) priceBottle = 0;
-
-  let glassPrice = priceNum(r.glassPrice);
-  if(glassPrice==null) glassPrice = priceNum(r.byGlassPrice);
-  if(glassPrice==null) glassPrice = priceNum(prices.glass);
-  if(glassPrice==null && Array.isArray(r.priceTiers)){
-    for(const t of r.priceTiers){
-      if(t && typeof t==='object'){
-        const label=String(t.label||t.type||t.size||'').toLowerCase();
-        if(/glass|by[- ]the[- ]glass|btg/.test(label)){ const p=priceNum(t.price); if(p!=null){ glassPrice=p; break; } }
-      }
-    }
-  }
-  const halfBottlePrice = priceNum(r.halfBottlePrice) || priceNum(prices.halfBottle) || priceNum(prices.half) || null;
-  const carafePrice = priceNum(prices.carafe) || priceNum(r.carafePrice) || null;
+  const _px = extractWinePrices(r);
+  let priceBottle = _px.bottle || 0;
+  let glassPrice = _px.glass || null;
+  const halfBottlePrice = _px.half || null;
+  const carafePrice = _px.carafe || null;
 
   let byGlass;
   if(r.byGlass!=null && r.byGlass!==''){
