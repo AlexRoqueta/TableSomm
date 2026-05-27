@@ -1256,5 +1256,45 @@ try{
   }
 }catch(_){}
 </script>
+<script>
+// Mobile-share fallback: when this standalone index.html is opened on a new phone,
+// local browser storage will not contain the uploaded restaurant logo. Keep the
+// mobile header from showing a blank logo box by falling back to the TableSomm mark.
+(function(){
+  const FALLBACK_LOGO = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="18" fill="#74142f"/>
+      <path d="M20 9h24c0 9-4.7 15.5-8.5 20.2V43c0 3.2 1.1 5.6 4.1 8.6V56H24.4v-4.4c3-3 4.1-5.4 4.1-8.6V29.2C24.7 24.5 20 18 20 9Z" fill="none" stroke="#f1d79f" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M25 19h14" stroke="#f1d79f" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+  `);
+
+  function applyLogoFallback(){
+    const hasUploadedLogo = !!(typeof state !== "undefined" && state.branding && state.branding.logo);
+    const mobileLogo = document.getElementById("mobileBrandLogo");
+    if (mobileLogo && !hasUploadedLogo) {
+      mobileLogo.src = FALLBACK_LOGO;
+      mobileLogo.style.display = "block";
+      mobileLogo.alt = "TableSomm logo";
+    }
+    const heroLogo = document.getElementById("heroBrandLogo");
+    if (heroLogo && !hasUploadedLogo) {
+      heroLogo.src = FALLBACK_LOGO;
+      heroLogo.style.visibility = "visible";
+      heroLogo.alt = "TableSomm logo";
+    }
+  }
+
+  const originalRenderBranding = window.renderBranding;
+  if (typeof originalRenderBranding === "function") {
+    window.renderBranding = function(){
+      originalRenderBranding.apply(this, arguments);
+      applyLogoFallback();
+    };
+  }
+  window.addEventListener("DOMContentLoaded", applyLogoFallback);
+  setTimeout(applyLogoFallback, 0);
+})();
+</script>
 </body>
 </html>
